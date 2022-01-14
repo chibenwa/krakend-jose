@@ -139,6 +139,7 @@ func TokenSignatureValidator(hf muxlura.HandlerFactory, logger logging.Logger, r
 		return func(w http.ResponseWriter, r *http.Request) {
 			token, err := validator.ValidateRequest(r)
 			if err != nil {
+	                       w.Header().Set("WWW-Authenticate", "abcde")
 				http.Error(w, err.Error(), http.StatusUnauthorized)
 				return
 			}
@@ -146,11 +147,13 @@ func TokenSignatureValidator(hf muxlura.HandlerFactory, logger logging.Logger, r
 			claims := map[string]interface{}{}
 			err = validator.Claims(r, token, &claims)
 			if err != nil {
+	                       w.Header().Set("WWW-Authenticate", "abcde")
 				http.Error(w, err.Error(), http.StatusUnauthorized)
 				return
 			}
 
 			if rejecter.Reject(claims) {
+	                       w.Header().Set("WWW-Authenticate", "abcde")
 				http.Error(w, "", http.StatusUnauthorized)
 				return
 			}
